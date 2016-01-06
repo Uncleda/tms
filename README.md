@@ -5,9 +5,6 @@ A python web console to manage the VDI teminals, which currently support Linux b
 ### Dependencies
 base on `python2.7.5`, `Django1.9`, `fabric1.0` and `MySQL`
 
-This is just a demo!
-If you want to test, please modify the `env.user` and `env.password` in fabfile.py
-
 ### Getting start
 1. download the source code;
 2. create database and modity the database configuration in setting file;
@@ -22,9 +19,9 @@ If you want to test, please modify the `env.user` and `env.password` in fabfile.
    ```
    It would start the server like this:
 
-   January 06, 2016 - 06:44:22
-   Django version 1.9, using settings 'tms.settings'
-   Starting development server at http://IP:PORT/
-   Quit the server with CONTROL-C.
+   *January 06, 2016 - 06:44:22*
+   *Django version 1.9, using settings 'tms.settings'*
+   *Starting development server at http://IP:PORT/*
+   *Quit the server with CONTROL-C.*
 
 6. Copy the URL address http://IP:PORT/admin to your browser address.
