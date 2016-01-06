@@ -6,8 +6,8 @@ from fabric.context_managers import *
 django.project('tms')
 
 # need to change the following two var in your env
-env.user = 'andy'
-env.password = 'nji90okm'
+env.user = 'oem'
+env.password = '123456'
 
 env.skip_bad_hosts = True
 

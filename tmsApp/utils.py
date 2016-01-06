@@ -4,10 +4,11 @@ from django.db import models
 from fabric.api import *
 from django.contrib import admin
 from .commons import *
+from fabfile import *
 
 def getHostName(modeladmin, request, queryset):
     #host_num = len(queryset)
-    output = execute(get_host_name, hosts = getHostlist(queryset))
+    output = execute(get_host_name, hosts = getHostList(queryset))
     # output is a dictionary
     # which like {u'192.168.233.138': 'dev1', u'192.168.233.139': 'dev2'}
     #for k,v in output.items():
@@ -27,7 +28,7 @@ def getHostName(modeladmin, request, queryset):
 getHostName.short_description = "Get Host Name"
 
 def getCPUInfo(modeladmin, request, queryset):
-    output = execute(get_cpu_info, hosts = getHostlist(queryset))
+    output = execute(get_cpu_info, hosts = getHostList(queryset))
     # TODO save the result to db
 
 getCPUInfo.short_description = "Get CPU infomation"
