@@ -7,13 +7,17 @@ from .commons import *
 from fabfile import *
 from .models import *
 
-def getUserName(modeladmin, request, queryset):
+def getHostName(modeladmin, request, queryset):
     #host_num = len(queryset)
-    output = execute(get_user_name, hosts = getHostList(queryset))
-    saveResult2Db(output)
+    output = execute(get_host_name, hosts = getHostList(queryset))
     # output is a dictionary
     # which like {u'192.168.233.138': 'dev1', u'192.168.233.139': 'dev2'}
+    #for k,v in output.items():
+    #    res[k] = str(v)
+    #    print k, str(v)
     
+    # TODO save the result to db
+
    #rows_updated = queryset.update(status = 1)
    #     if rows_updated == 1:
    #         message_bit = "1 computer was"
@@ -22,20 +26,19 @@ def getUserName(modeladmin, request, queryset):
 
    #    self.message_user(request,"%s successfully done." % message_bit)
 
-getUserName.short_description = "Get User Name"
+getHostName.short_description = "Get Host Name"
 
 def getCPUInfo(modeladmin, request, queryset):
     output = execute(get_cpu_info, hosts = getHostList(queryset))
-    saveResult2Db(output)
-    '''
+    # TODO save the result to db
     for k,v in output.items():
 	term = Terminal.objects.get(ip = k)
 	print term
-	term.cpu_vendor = v.get('cpu_vendor')
-	print str(v.get('cpu_vendor'))
-	term.cpu_cores = v.get('cpu_cores')
-	term.cpu_speed = v.get('cpu_speed')
-	term.cache_size = v.get('cache_size')
+	term.cpu_vender = v.get('vendor')
+	print str(v.get('vendor'))
+	term.cpu_cores = v.get('cores')
+	term.cpu_speed = v.get('speed')
+	term.cache_size = float(v.get('cache'))
 	term.save()
-    '''
+
 getCPUInfo.short_description = "Get CPU infomation"

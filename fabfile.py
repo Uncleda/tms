@@ -13,10 +13,13 @@ env.skip_bad_hosts = True
 
 @task
 @parallel(pool_size = 5)
-def get_host_name():
+def get_user_name():
     with settings(hide('everything'), warn_only = True):
-        name = run('hostname')
-        return name
+	result = {}
+        
+	result['user'] = run('who | head -n 1 | cut -d" " -f1')
+        
+	return result
 
 @task
 @parallel(pool_size = 5)
@@ -24,15 +27,11 @@ def get_cpu_info():
     with settings(hide('everything'), warn_only = True):
         result = {}
 
-	vendor = run('cat /proc/cpuinfo | grep vendor | cut -d":" -f2')
-	cores  = run('cat /proc/cpuinfo | grep processor | wc -l')
-	speed  = run('cat /proc/cpuinfo | grep MHz | cut -d":" -f2 | head -n 1')
-	cache  = run('cat /proc/cpuinfo | grep cache | cut -d":" -f2 | cut -d" " -f2 | head -n 1')
-	
-	result['vender'] = vender
-	result['cores'] = cores
-	result['speed'] = speed
-	result['cache'] = chche
+	result['cpu_vendor'] = str(run('cat /proc/cpuinfo | grep vendor | cut -d":" -f2 | head -n 1'))
+	result['cpu_cores']  = int(run('cat /proc/cpuinfo | grep processor | wc -l'))
+	result['cpu_speed']  = float(run('cat /proc/cpuinfo | grep MHz | cut -d":" -f2 | head -n 1'))
+	result['cache_size']  = float(run('cat /proc/cpuinfo | grep cache | cut -d":" -f2 | cut -d" " -f2 | head -n 1'))
+	print type(result['cpu_vendor']), result['cpu_vendor']
 
 	return result
 	
