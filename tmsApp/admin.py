@@ -30,7 +30,7 @@ class TerminalAdmin(admin.ModelAdmin):
     list_per_page = 20
     #list_editable
 
-    actions = [getHostName, getCPUInfo]
+    actions = [getUserName, getCPUInfo]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')

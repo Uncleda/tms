@@ -10,13 +10,13 @@ base on `python2.7.5`, `Django1.9`, `fabric1.0` and `MySQL`
 2. create database and modity the database configuration in setting file;
 3. change the `env.user` and `env.password` in fabfile file;
 4. create a super user:
-   ```
-   python manage.py createsuperuser
-   ```
+    ```
+    python manage.py createsuperuser
+    ```
 5. modify the shell scrip runserver based on your test environment and just run:
-   ```
-   ./runserver
-   ```
+    ```
+    ./runserver
+    ```
    It would start the server like this:
 
    *January 06, 2016 - 06:44:22*
