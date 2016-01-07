@@ -7,6 +7,14 @@ def getHostList(queryset):
         hosts.append(instance.ip)
     return hosts
 
+def showUpdatedResult(self, request, rows_updated):
+    if rows_updated == 1:
+        message_bit = "1 terminal was"
+    else:
+        message_bit = "%s terminals were" % rows_updated
+
+    self.message_user(request,"%s successfully done." % message_bit)
+
 def saveResult2Db(output):
     for k, v in output.items():
 	term = Terminal.objects.get(ip = k)

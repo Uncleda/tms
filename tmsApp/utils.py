@@ -11,6 +11,7 @@ def getUserName(modeladmin, request, queryset):
     #host_num = len(queryset)
     output = execute(get_user_name, hosts = getHostList(queryset))
     saveResult2Db(output)
+    showUpdatedResult(modeladmin, request, len(output))
     # output is a dictionary
     # which like {u'192.168.233.138': 'dev1', u'192.168.233.139': 'dev2'}
     
@@ -27,6 +28,7 @@ getUserName.short_description = "Get User Name"
 def getCPUInfo(modeladmin, request, queryset):
     output = execute(get_cpu_info, hosts = getHostList(queryset))
     saveResult2Db(output)
+    showUpdatedResult(modeladmin, request, len(output))
     '''
     for k,v in output.items():
 	term = Terminal.objects.get(ip = k)
