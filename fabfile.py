@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#-*-coding:UTF-8-*-
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
@@ -37,4 +39,16 @@ def get_cpu_info():
 	print type(result['cpu_vendor']), result['cpu_vendor']
 
 	return result
+
+@task
+@parallel(pool_size = 5)
+def launch_communication():
+    with settings(hide('everything'),warn_only = True):
+         talk_content='nihao'
+         con='Admin：'+ talk_content
+         content='"{0}"'.format(con)
+         shellstr='export DISPLAY=:0.0;zenity --entry --title "管理员消息" --text {0} --width=350 --height=150'
+         shellstr=shellstr.format(content)
+         ret_content=run(shellstr)
+         return ret_content
 	

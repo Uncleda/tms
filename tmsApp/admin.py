@@ -41,7 +41,7 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo]
+    actions = [getUserName, getCPUInfo,launchCommunication]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')

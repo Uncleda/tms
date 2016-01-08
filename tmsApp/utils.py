@@ -34,3 +34,13 @@ def getCPUInfo(modeladmin, request, queryset):
 	term.save()
     '''
 getCPUInfo.short_description = "Get CPU infomation"
+
+def launchCommunication(modeladmin,request,queryset):
+    #output = execute(launch_communication,hosts = getHostList(queryset))
+    #TODO save the result to the specific data structure to show in the net page
+    #print output
+    for item in getHostList(queryset):
+        output = execute(launch_communication, host = item)
+
+launchCommunication.short_description = "Launch Communication"
+
