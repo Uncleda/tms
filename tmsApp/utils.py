@@ -2,26 +2,19 @@ from __future__ import unicode_literals
 
 from django.db import models
 from fabric.api import *
-from django.contrib import admin
+from django.contrib import admin, messages
 from .commons import *
 from fabfile import *
 from .models import *
 
 def getUserName(modeladmin, request, queryset):
     #host_num = len(queryset)
-    output = execute(get_user_name, hosts = getHostList(queryset))
-    saveResult2Db(output)
-    showUpdatedResult(modeladmin, request, len(output))
-    # output is a dictionary
-    # which like {u'192.168.233.138': 'dev1', u'192.168.233.139': 'dev2'}
-    
-   #rows_updated = queryset.update(status = 1)
-   #     if rows_updated == 1:
-   #         message_bit = "1 computer was"
-   #     else:
-   #         message_bit = "%s computers were" % rows_updated
-
-   #    self.message_user(request,"%s successfully done." % message_bit)
+    try:
+        output = execute(get_user_name, hosts = getHostList(queryset))
+        saveResult2Db(output)
+        showUpdatedResult(modeladmin, request, len(output))
+    except:
+	showUpdatedResult(modeladmin, request)
 
 getUserName.short_description = "Get User Name"
 

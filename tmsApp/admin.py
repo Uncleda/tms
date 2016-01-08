@@ -4,6 +4,16 @@ from .models import Terminal, TerminalSoftware, TerminalDevice
 from .utils import *
 
 # Register your models here.
+class TerminalSoftwareInline(admin.TabularInline):
+    model = TerminalSoftware
+    list_per_page = 5
+    max_num = 5
+    can_delete = False
+
+class TerminalDeviceInline(admin.TabularInline):
+    model = TerminalDevice
+    can_delete = False
+    max_num = 5
 
 class TerminalAdmin(admin.ModelAdmin):
     list_display = ('tag', 'user', 'ip', 'department','project','timestamp','status')
@@ -28,6 +38,7 @@ class TerminalAdmin(admin.ModelAdmin):
     #list_filter = (('department',admin.filters.DropdownFilter),('project',admin.filters.DropdownFilter),)
     list_filter = ('department','project',)
     list_per_page = 20
+    inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
     actions = [getUserName, getCPUInfo]
