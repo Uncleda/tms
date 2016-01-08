@@ -49,7 +49,7 @@ class TerminalDevice(models.Model):
     computer = models.ForeignKey(Terminal)
     device_type = models.CharField(max_length = 20,
                                     choices = DEVICE_TYPE_CHOISES,
-                                    null = True)
+                                    null = True, blank = True)
     device_name = models.CharField(max_length = 40, blank = True)
 
     def __unicode__(self):

@@ -9,12 +9,15 @@ django.project('tms')
 env.user = 'oem'
 env.password = '123456'
 
+env.warn_only = True
 env.skip_bad_hosts = True
+env.timeout = 3
+env.preconnect = True
 
 @task
 @parallel(pool_size = 5)
 def get_user_name():
-    with settings(hide('everything'), warn_only = True):
+    with settings(hide('warnings')):
 	result = {}
         
 	result['user'] = run('who | head -n 1 | cut -d" " -f1')
