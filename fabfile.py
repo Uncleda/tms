@@ -44,7 +44,8 @@ def upload_file(src=None, dist=None):
     # hardcode for dist
     #dist = '/tmp'
     with settings(hide('everything')):
-        put(src, dist, use_sudo = True) 
+        res = put(src, dist, use_sudo = True)
+    return res    
 
 @task
 @parallel(pool_size = 5)
@@ -54,21 +55,29 @@ def install_software(src=None, dist=None, soft_type='TAR', full_name=None):
     with settings(hide('everything')):
         res = upload_file(src, dist)
         if res.succeeded:
+            # example for full_name: "tools/nfs-screenshot_0.5.8_i386.tar.gz"
             full_name = full_name.split('/')[1]
+            # full_name is "nfs-screenshot_0.5.8_i386.tar.gz"
             pkg = '{0}/{1}'.format(dist, full_name)
-            print pkg
-            file_name = full_name.split('.')[0]
-            extension_name = full_name.split('.')[1]
-            print file_name,extension_name
+            
             if soft_type == 'TAR':
+                extension_name = full_name.split('.')[-1]
+                
+                if extension_name == 'tgz':
+                    file_name = full_name.split('.tgz')[0]
+                else:
+                    file_name = full_name.split('.tar')[0]
+                
                 if extension_name in ['gz', 'gzip', 'zip', 'tgz']:
-                    run('tar -zxvf {0}'.format(pkg))
+                    run('tar -zxvf {0} -C {1}'.format(pkg, dist))
                 elif extension_name == 'bz2':
-                    run('tar -jxvf {0}'.format(pkg))
-                with cd('{0}/{1}'.format(dist, file_name)):
-                    run('./configure && make && make install && make clean')
+                    run('tar -jxvf {0} -C {1}'.format(pkg, dist))
+                print '{0}/{1}'.format(dist, file_name) 
+                run('if test -d {0}/{1}; then cd {0}/{1} && ./configure && make && make install && make clean'.format(dist, file_name))
+    
             elif soft_type == 'RPM':
-                run('rpm -ivh {0}'.format(pkg))
+                sudo('rpm -ivh {0}'.format(pkg))
+            
             elif soft_type == 'DEB':
-                run('dpkg -i {0}'.format(pkg))
+                sudo('dpkg -i {0}'.format(pkg))
 

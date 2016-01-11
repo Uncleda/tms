@@ -57,7 +57,7 @@ class SoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'genre', 'selected', 'timestamp')
     list_display_links = ('name',)
     search_fields = ['name','genre']
-    actions = [selectResources]
+    actions = [selectResources, unselectResources]
 
 admin.site.register(Terminal, TerminalAdmin)
 admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)

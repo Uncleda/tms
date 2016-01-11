@@ -37,19 +37,26 @@ getCPUInfo.short_description = "Get CPU Infomation"
 
 def selectResources(modeladmin, request, queryset):
     rows_updated = queryset.update(selected = 1)
+    showUpdatedResult(modeladmin, request, rows_updated)
 
 selectResources.short_description = "Select Softwares to Install"
 
+def unselectResources(modeladmin, request, queryset):
+    rows_updated = queryset.update(selected = 0)
+    showUpdatedResult(modeladmin, request, rows_updated)
+
+unselectResources.short_description = "Remove Softwares to Install"
+
 def installSoftware(modeladmin, request, queryset):
     selected_files = Software.objects.filter(selected = 1)
-
+    
     if len(selected_files) == 0:
-        pass
+        modeladmin.message_user(request,"Please select software you want to install first", level=messages.ERROR)
     else:
         for f in selected_files:
             try:
-                output = execute(install_software, hosts = getHostlist(queryset),
-                                    src = f.upload.path, soft_type = f.genre, full_name = f.upload.name)
+                output = execute(install_software, hosts = getHostList(queryset), src = f.upload.path, dist = '/tmp', soft_type = f.genre, full_name = f.upload.name)
+                print output
                 showUpdatedResult(modeladmin, request, len(output))
             except:
                 showUpdatedResult(modeladmin, request)
