@@ -41,7 +41,7 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo]
+    actions = [getUserName, getCPUInfo, installSoftware]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')
@@ -53,6 +53,13 @@ class TerminalDeviceAdmin(admin.ModelAdmin):
     search_fields = ['device_name','computer']
     list_per_page = 20
 
+class SoftwareAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'genre', 'selected', 'timestamp')
+    list_display_links = ('name',)
+    search_fields = ['name','genre']
+    actions = [selectResources]
+
 admin.site.register(Terminal, TerminalAdmin)
 admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
 admin.site.register(TerminalDevice, TerminalDeviceAdmin)
+admin.site.register(Software, SoftwareAdmin)
