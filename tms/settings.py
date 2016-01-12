@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Dictionary which files upload to
+MEDIA_ROOT = '/tmp/'
 
 # Application definition
 

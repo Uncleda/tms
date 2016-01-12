@@ -49,10 +49,25 @@ class TerminalDevice(models.Model):
     computer = models.ForeignKey(Terminal)
     device_type = models.CharField(max_length = 20,
                                     choices = DEVICE_TYPE_CHOISES,
-                                    null = True)
+                                    null = True, blank = True)
     device_name = models.CharField(max_length = 40, blank = True)
 
     def __unicode__(self):
         return self.device_name
 
+class Software(models.Model):
+    SOFTWARE_TYPE_CHOICES = (
+        ('TAR', 'Tar Package'),
+        ('RPM', 'Rpm Package'),
+        ('DEB', 'Deb Package'),
+    )
+    name = models.CharField(max_length = 40)
+    genre = models.CharField(u'type', max_length = 20,
+                                choices = SOFTWARE_TYPE_CHOICES,
+                                default = 'TAR')
+    selected = models.BooleanField(u'To Install?', default = False, editable = False)
+    timestamp = models.DateTimeField(u'upload time', auto_now = True, blank = True)
+    upload = models.FileField(upload_to='uploads/')
 
+    def __unicode__(self):
+        return self.name

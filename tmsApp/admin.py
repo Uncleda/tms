@@ -4,6 +4,16 @@ from .models import Terminal, TerminalSoftware, TerminalDevice
 from .utils import *
 
 # Register your models here.
+class TerminalSoftwareInline(admin.TabularInline):
+    model = TerminalSoftware
+    list_per_page = 5
+    max_num = 5
+    can_delete = False
+
+class TerminalDeviceInline(admin.TabularInline):
+    model = TerminalDevice
+    can_delete = False
+    max_num = 5
 
 class TerminalAdmin(admin.ModelAdmin):
     list_display = ('tag', 'user', 'ip', 'department','project','timestamp','status')
@@ -28,9 +38,10 @@ class TerminalAdmin(admin.ModelAdmin):
     #list_filter = (('department',admin.filters.DropdownFilter),('project',admin.filters.DropdownFilter),)
     list_filter = ('department','project',)
     list_per_page = 20
+    inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo]
+    actions = [getUserName, getCPUInfo, installSoftware]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')
@@ -42,6 +53,13 @@ class TerminalDeviceAdmin(admin.ModelAdmin):
     search_fields = ['device_name','computer']
     list_per_page = 20
 
+class SoftwareAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'genre', 'selected', 'timestamp')
+    list_display_links = ('name',)
+    search_fields = ['name','genre']
+    actions = [selectResources, unselectResources]
+
 admin.site.register(Terminal, TerminalAdmin)
 admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
 admin.site.register(TerminalDevice, TerminalDeviceAdmin)
+admin.site.register(Software, SoftwareAdmin)
