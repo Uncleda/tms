@@ -1,0 +1,12 @@
+{% extends "monitor_info.html" %}
+{% load i18n l10n admin_urls admin_static admin_list %}
+
+{% block table_header %}
+        <tr>
+            <th>IP</th>
+            <th>Tag</th>
+            <th>memory used</th>
+            <th>memory total</th>
+            <th>memory percentage</th>
+        </tr>
+{% endblock %}

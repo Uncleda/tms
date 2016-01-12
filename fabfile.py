@@ -109,25 +109,25 @@ def get_monitor_info():
 
         cpu_percent = 100 - string.atof(run("top -n 1 -b | grep -i '^%Cpu' | awk -F ',' '{print $4}' | sed 's/^[ \t]*//g' | cut -d' ' -f1"))
 
-        memory_total = run("free | grep Mem | sed 's/ \+/ /g' | cut -d' ' -f2")
-        memory_used = run("free | grep Mem | sed 's/ \+/ /g' | cut -d' ' -f3")
+        memory_total = run("free -m| grep Mem | sed 's/ \+/ /g' | cut -d' ' -f2")
+        memory_used = run("free -m| grep Mem | sed 's/ \+/ /g' | cut -d' ' -f3")
 
-        disk_percent = run("df -h | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f5")
+        disk_total = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f2")
+        disk_used = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f3")
+        disk_percent = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f5")
 
-        result = {}
-        result['cpu_percent'] = str("%.2f" % cpu_percent) + "%"
-        result['memory_percent'] = str("%.2f" % (string.atof(memory_used) / string.atof(memory_total) * 100)) + "%"
-        result['disk_percent'] = disk_percent
-
-        return result
-
-@task
-@parallel(pool_size = 5)
-def poweron_term():
-    with settings(hide('everything'), warn_only = True):
+        process_count = run("ps -ef | wc -l")
 
         result = {}
-        result['ret'] = run("shutdown -h now")
+        result['1_tag'] = "Tag"
+        result['2_process_count'] = str("%d" % (string.atoi(process_count) - 3))
+        result['3_cpu_percent'] = str("%.2f" % cpu_percent) + "%"
+        result['4_memory_used'] = str("%.1f" % (string.atof(memory_used) / 1024)) + "G"
+        result['5_memory_total'] = str("%.1f" % (string.atof(memory_total) / 1024)) + "G"
+        result['6_memory_percent'] = str("%.2f" % (string.atof(memory_used) / string.atof(memory_total) * 100)) + "%"
+        result['7_disk_used'] = str("%.1f" % (string.atof(disk_used) / 1024)) + "G"
+        result['8_disk_total'] = str("%.1f" % (string.atof(disk_total) / 1024)) + "G"
+        result['9_disk_percent'] = disk_percent
 
         return result
 
@@ -147,7 +147,8 @@ def reboot_term():
     with settings(hide('everything'), warn_only = True):
 
         result = {}
-        result['ret'] = run("reboot")
+        #result['ret'] = run("reboot")
+        result['ret'] = reboot(wait = 30)
 
         return result
 

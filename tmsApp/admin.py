@@ -41,7 +41,8 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo, refresh_term, monitor_term, poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
+    actions = [getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
+               poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')
