@@ -1,0 +1,19 @@
+{% extends "base_site.html" %}
+{% load i18n l10n admin_urls admin_static admin_list %}
+
+{% block content %}
+    <p>{% blocktrans %}Monitor Information:{% endblocktrans %}</p>
+
+    <form action="" method="post">{% csrf_token %}
+    <div>
+    {% for ip, result in monitor_info %}
+        <h2><li>{{ ip }} - 
+        {% for key, value in result.items %}
+             {{ key }}:{{ value }}
+        {% endfor %}
+        </li></h2>
+    {% endfor %}
+    <input type="submit" class="btn btn-high btn-info" value="{% trans "Return" %}" />
+    </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% load refresh_info %}
+
+<script type="text/javascript">
+    function duihua() {
+        alert("Hello!!!!")
+    }
+</script>
+
+<fieldset class="full-width">
+	<div class="submit-row">
+		{% block content %}
+			{% refresh_info adminform %}
+		{%endblock%}
+	</div>
+</fieldset>

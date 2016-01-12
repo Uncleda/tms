@@ -1,3 +1,3 @@
 #!/bin/sh
 
-python manage.py runserver 10.50.200.119:8666
+python manage.py runserver 0.0.0.0:8001
