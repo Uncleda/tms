@@ -3,14 +3,22 @@ from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
 
 def getHostList(queryset):
+    '''
+    get host ip list from the selected terminals
+    '''
     hosts = []
     for instance in queryset:
         hosts.append(instance.ip)
     return hosts
 
 def showUpdatedResult(self, request, rows_updated=0):
+    '''
+    show action result on top
+    '''
     if rows_updated == 0:
-        self.message_user(request,"Failed due to some terminals can not be reached!", level=messages.ERROR)
+        self.message_user(request,
+                            "Failed due to some terminals can not be reached!", 
+                            level=messages.ERROR)
     else:
         if rows_updated == 1:
             message_bit = "1 terminal was"
@@ -19,6 +27,9 @@ def showUpdatedResult(self, request, rows_updated=0):
         self.message_user(request,"%s successfully done." % message_bit)
 
 def saveResult2Db(output):
+    '''
+    save the fabric execute action result(a dict) to DB
+    '''
     if len(output) >= 1:
 	    for k, v in output.items():
 	        try:
