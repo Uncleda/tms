@@ -3,7 +3,7 @@
 A python web console to manage the VDI teminals, which currently support Linux based terminal.
 
 ### Dependencies
-base on `python2.7.5`, `Django1.9`, `fabric1.0` and `MySQL`
+base on `python2.7.5`, `Django1.9`, `fabric1.0`, `django-suit0.2.15` and `MySQL`
 
 ### Getting start
 1. download the source code;

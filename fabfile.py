@@ -1,4 +1,3 @@
-import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
@@ -81,7 +80,47 @@ def install_software(src=None, dist=None, soft_type='TAR', full_name=None):
             
             elif soft_type == 'DEB':
                 sudo('dpkg -i {0}'.format(pkg))
-	
+
+@task
+@parallel(pool_size = 5)
+def install_OSimage(src=None, dist=None, soft_type='ISO', full_name=None):
+    # hardcode for dist
+    dist = "/tmp"
+    sudo('if [ ! -d {0} ];then mkdir -p {0};fi'.format(dist))
+    with settings(hide('everything')):
+        res = upload_file(src, dist)
+        if res.succeeded:
+            if soft_type == 'ISO':
+                full_name = '{0}/{1}'.format(dist, full_name.split('/')[1])
+                # 1. Mount iso image
+                mount_path = '/mnt/cdrom'
+                sudo('if [ ! -d {0} ];then mkdir -p {0};fi'.format(mount_path))
+                sudo('mount -o loop -t iso9660 {0} {1}'.format(full_name,mount_path))
+                # 2. Get the kernal boot file and copy it to the 'dist' dir 
+                vmlinuz_path = run('find {0} -name vmlinuz*'.format(mount_path))
+                initrd_path = run('find {0} -name initrd*'.format(mount_path))
+                sudo('cp {0} {1}'.format(vmlinuz_path,dist))
+                sudo('cp {0} {1}'.format(initrd_path,dist))
+                # 3. Modify the grub configuration
+                vmlinuz_path = '{0}/{1}'.format(dist,vmlinuz_path.split('/')[-1])
+                initrd_path = '{0}/{1}'.format(dist,initrd_path.split('/')[-1])
+                local('touch tmsApp/static/admin/conf/grub.cfg')
+                with open('tmsApp/static/admin/conf/template_grub.cfg','r') as f:
+                    lines = f.readlines()
+                with open('tmsApp/static/admin/conf/grub.cfg','w') as f:
+                    for line in lines:
+                        f.write(line.replace('$vmlinuz_path',vmlinuz_path)
+				.replace('$initrd_path',initrd_path)
+				.replace('$isoImage_path',full_name))
+                # 4. upload the grub configuration to the host and reboot
+                upload_file('tmsApp/static/admin/conf/grub.cfg','/boot/grub')
+                local('rm -rf tmsApp/static/admin/conf/grub.cfg')
+                sudo('umount {0}'.format(mount_path))
+                sudo('reboot')
+            elif soft_type == 'IMG':
+                #TBD in the future
+                pass
+
 @task
 @parallel(pool_size = 5)
 def get_term_info():
@@ -109,25 +148,25 @@ def get_monitor_info():
 
         cpu_percent = 100 - string.atof(run("top -n 1 -b | grep -i '^%Cpu' | awk -F ',' '{print $4}' | sed 's/^[ \t]*//g' | cut -d' ' -f1"))
 
-        memory_total = run("free | grep Mem | sed 's/ \+/ /g' | cut -d' ' -f2")
-        memory_used = run("free | grep Mem | sed 's/ \+/ /g' | cut -d' ' -f3")
+        memory_total = run("free -m| grep Mem | sed 's/ \+/ /g' | cut -d' ' -f2")
+        memory_used = run("free -m| grep Mem | sed 's/ \+/ /g' | cut -d' ' -f3")
 
-        disk_percent = run("df -h | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f5")
+        disk_total = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f2")
+        disk_used = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f3")
+        disk_percent = run("df -m | grep ' \/$' | sed 's/ \+/ /g' | cut -d' ' -f5")
 
-        result = {}
-        result['cpu_percent'] = str("%.2f" % cpu_percent) + "%"
-        result['memory_percent'] = str("%.2f" % (string.atof(memory_used) / string.atof(memory_total) * 100)) + "%"
-        result['disk_percent'] = disk_percent
-
-        return result
-
-@task
-@parallel(pool_size = 5)
-def poweron_term():
-    with settings(hide('everything'), warn_only = True):
+        process_count = run("ps -ef | wc -l")
 
         result = {}
-        result['ret'] = run("shutdown -h now")
+        result['1_tag'] = "Tag"
+        result['2_process_count'] = str("%d" % (string.atoi(process_count) - 3))
+        result['3_cpu_percent'] = str("%.2f" % cpu_percent) + "%"
+        result['4_memory_used'] = str("%.1f" % (string.atof(memory_used) / 1024)) + "G"
+        result['5_memory_total'] = str("%.1f" % (string.atof(memory_total) / 1024)) + "G"
+        result['6_memory_percent'] = str("%.2f" % (string.atof(memory_used) / string.atof(memory_total) * 100)) + "%"
+        result['7_disk_used'] = str("%.1f" % (string.atof(disk_used) / 1024)) + "G"
+        result['8_disk_total'] = str("%.1f" % (string.atof(disk_total) / 1024)) + "G"
+        result['9_disk_percent'] = disk_percent
 
         return result
 
@@ -147,7 +186,7 @@ def reboot_term():
     with settings(hide('everything'), warn_only = True):
 
         result = {}
-        result['ret'] = run("reboot")
+        #result['ret'] = run("reboot")
+        result['ret'] = reboot(wait = 30)
 
         return result
-
