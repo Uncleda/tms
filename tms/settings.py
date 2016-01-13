@@ -82,8 +82,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
 	'NAME': 'tmsDB',
-	'USER': 'root',
-	'PASSWORD': 'hello.1234',
+	'USER': 'tmsAdmin',
+	'PASSWORD': 'bhu890-=',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
