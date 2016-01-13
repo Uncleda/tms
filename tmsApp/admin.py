@@ -64,13 +64,13 @@ class OsImageAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'genre', 'selected', 'timestamp',)
     list_display_links = ('name',)
     search_fields = ['name', 'genre',]
-    actions = [selectOSimage, unselectOSimage,]
+    actions = [selectResources, unselectResources]
 
 class FileAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'selected', 'timestamp',)
     list_display_links = ('name',)
     search_fields = ['name',]
-    actions = [selectFiles, unselectFiles]
+    actions = [selectResources, unselectResources]
 
 admin.site.register(Terminal, TerminalAdmin)
 admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)

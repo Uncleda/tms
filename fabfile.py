@@ -90,10 +90,7 @@ def install_OSimage(src=None, dist=None, soft_type='ISO', full_name=None):
     with settings(hide('everything')):
         res = upload_file(src, dist)
         if res.succeeded:
-            if (soft_type == 'TAR') or (soft_type == 'RPM') or (soft_type == 'DEB'):
-                #TBD in the future
-                pass
-            elif soft_type == 'ISO':
+            if soft_type == 'ISO':
                 full_name = '{0}/{1}'.format(dist, full_name.split('/')[1])
                 # 1. Mount iso image
                 mount_path = '/mnt/cdrom'
@@ -107,29 +104,22 @@ def install_OSimage(src=None, dist=None, soft_type='ISO', full_name=None):
                 # 3. Modify the grub configuration
                 vmlinuz_path = '{0}/{1}'.format(dist,vmlinuz_path.split('/')[-1])
                 initrd_path = '{0}/{1}'.format(dist,initrd_path.split('/')[-1])
-                local('touch static/admin/conf/grub.cfg')
-                with open('static/admin/conf/template_grub.cfg','r') as f:
+                local('touch tmsApp/static/admin/conf/grub.cfg')
+                with open('tmsApp/static/admin/conf/template_grub.cfg','r') as f:
                     lines = f.readlines()
-                with open('static/admin/conf/grub.cfg','w') as f:
+                with open('tmsApp/static/admin/conf/grub.cfg','w') as f:
                     for line in lines:
-                        f.write(line.replace('$vmlinuz_path',vmlinuz_path).replace('$initrd_path',initrd_path).replace('$isoImage_path',full_name))
+                        f.write(line.replace('$vmlinuz_path',vmlinuz_path)
+				.replace('$initrd_path',initrd_path)
+				.replace('$isoImage_path',full_name))
                 # 4. upload the grub configuration to the host and reboot
-                upload_file('static/admin/conf/grub.cfg','/boot/grub')
-                local('rm -rf static/admin/conf/grub.cfg')
+                upload_file('tmsApp/static/admin/conf/grub.cfg','/boot/grub')
+                local('rm -rf tmsApp/static/admin/conf/grub.cfg')
                 sudo('umount {0}'.format(mount_path))
                 sudo('reboot')
             elif soft_type == 'IMG':
                 #TBD in the future
                 pass
-
-@task
-@parallel(pool_size = 5)
-def transfer_files(src=None, dist=None, full_name=None):
-    # hardcode for dist
-    dist = "/tmp"
-    sudo('if [ ! -d {0} ];then mkdir -p {0};fi'.format(dist))
-    with settings(hide('everything')):
-        res = upload_file(src, dist)
 
 @task
 @parallel(pool_size = 5)

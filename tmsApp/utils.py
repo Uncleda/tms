@@ -59,13 +59,13 @@ def selectResources(modeladmin, request, queryset):
     rows_updated = queryset.update(selected = 1)
     showUpdatedResult(modeladmin, request, rows_updated)
 
-selectResources.short_description = "Select Softwares to Install"
+selectResources.short_description = "Select Resources"
 
 def unselectResources(modeladmin, request, queryset):
     rows_updated = queryset.update(selected = 0)
     showUpdatedResult(modeladmin, request, rows_updated)
 
-unselectResources.short_description = "Remove Softwares to Install"
+unselectResources.short_description = " Unselect Resources"
 
 def installSoftware(modeladmin, request, queryset):
     '''
@@ -93,24 +93,6 @@ def installSoftware(modeladmin, request, queryset):
 
 installSoftware.short_description = "Install Software(s)"
 
-def selectOSimage(modeladmin, request, queryset):
-    '''
-    Select OS image to do next action(can only select one)
-    '''
-    rows_updated = queryset.update(selected = 1)
-    showUpdatedResult(modeladmin, request, rows_updated)
-
-selectOSimage.short_description = "Select OS image to Install"
-
-def unselectOSimage(modeladmin, request, queryset):
-    '''
-    Unselect OS image
-    '''
-    rows_updated = queryset.update(selected = 0)
-    showUpdatedResult(modeladmin, request, rows_updated)
-
-unselectOSimage.short_description = "Remove OS Image to Install"
-
 def installOSimage(modeladmin, request, queryset):
     '''
     Install the selected OS image to the terminals
@@ -134,25 +116,7 @@ def installOSimage(modeladmin, request, queryset):
         # No selected OS image after installing every time
         selected_files.update(selected = 0)
 
-installOSimage.short_description = "Install OS image"
-
-def selectFiles(modeladmin, request, queryset):
-   '''
-   Select files to do next action
-   '''
-   rows_updated = queryset.update(selected = 1)
-   showUpdatedResult(modeladmin, request, rows_updated)
-
-selectFiles.short_description = "Select Files to Transfer"
-
-def unselectFiles(modeladmin, request, queryset):
-    '''
-    Unselect OS image
-    '''
-    rows_updated = queryset.update(selected = 0)
-    showUpdatedResult(modeladmin, request, rows_updated)
-
-unselectFiles.short_description = "Remove Files to Transfer"
+installOSimage.short_description = "Install OS Image"
 
 def transferFiles(modeladmin, request, queryset):
     '''
@@ -166,10 +130,13 @@ def transferFiles(modeladmin, request, queryset):
                             "Please select software you want to install first",
                             level = messages.ERROR)
     else:
+	# hardcode for dist
+        dist = '/tmp'
         for f in selected_files:
             try:
-                output = execute(transfer_files, hosts = getHostList(queryset),
-                                        src = f.upload.path, full_name = f.upload.name)
+                output = execute(upload_file, hosts = getHostList(queryset),
+                                        src = f.upload.path, dist = dist)
+		print f.upload.path
                 showUpdatedResult(modeladmin, request, len(output))
             except:
                 showUpdatedResult(modeladmin, request)

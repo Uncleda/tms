@@ -82,8 +82,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
 	'NAME': 'tmsDB',
-	'USER': 'tmsAdmin',
-	'PASSWORD': 'bhu890-=',
+	'USER': 'root',
+	'PASSWORD': 'hello.1234',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
@@ -127,6 +127,3 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
