@@ -17,6 +17,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+admin.site.site_header = 'Lenovo iCloud Terminal Management System'
+admin.site.site_title = 'Lenovo iCloud Terminal Management System'
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
 ]

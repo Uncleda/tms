@@ -59,13 +59,13 @@ def selectResources(modeladmin, request, queryset):
     rows_updated = queryset.update(selected = 1)
     showUpdatedResult(modeladmin, request, rows_updated)
 
-selectResources.short_description = "Select Softwares to Install"
+selectResources.short_description = "Select Resources"
 
 def unselectResources(modeladmin, request, queryset):
     rows_updated = queryset.update(selected = 0)
     showUpdatedResult(modeladmin, request, rows_updated)
 
-unselectResources.short_description = "Remove Softwares to Install"
+unselectResources.short_description = " Unselect Resources"
 
 def installSoftware(modeladmin, request, queryset):
     '''
@@ -92,6 +92,59 @@ def installSoftware(modeladmin, request, queryset):
         selected_files.update(selected = 0)
 
 installSoftware.short_description = "Install Software(s)"
+
+def installOSimage(modeladmin, request, queryset):
+    '''
+    Install the selected OS image to the terminals
+    After that, unselect OS image
+    '''
+    selected_files= OsImage.objects.filter(selected = 1)
+
+    if len(selected_files) == 0:
+        modeladmin.message_user(request,
+                            "Please select OS image you want to install first",
+                            level = messages.ERROR)
+    else:
+        for f in selected_files:
+            try:
+                output = execute(install_OSimage, hosts = getHostList(queryset),
+                                        src = f.upload.path, soft_type = f.genre,
+					full_name = f.upload.name)
+                showUpdatedResult(modeladmin, request, len(output))
+            except:
+                showUpdatedResult(modeladmin, request)
+        # No selected OS image after installing every time
+        selected_files.update(selected = 0)
+
+installOSimage.short_description = "Install OS Image"
+
+def transferFiles(modeladmin, request, queryset):
+    '''
+    Transfer the selected files to the terminals
+    After that, unselect files
+    '''
+    selected_files= File.objects.filter(selected = 1)
+
+    if len(selected_files) == 0:
+        modeladmin.message_user(request,
+                            "Please select software you want to install first",
+                            level = messages.ERROR)
+    else:
+	# hardcode for dist
+        dist = '/tmp'
+        for f in selected_files:
+            try:
+                output = execute(upload_file, hosts = getHostList(queryset),
+                                        src = f.upload.path, dist = dist)
+		print f.upload.path
+                showUpdatedResult(modeladmin, request, len(output))
+            except:
+                showUpdatedResult(modeladmin, request)
+
+	# No selected file(s) after installing every time
+        selected_files.update(selected = 0)
+
+transferFiles.short_description = "Transfer Files"
 
 def refresh_term(modeladmin, request, queryset):
     '''

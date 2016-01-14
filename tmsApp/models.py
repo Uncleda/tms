@@ -71,3 +71,31 @@ class Software(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class OsImage(models.Model):
+    IMAGE_TYPE_CHOICE = (
+        ('TAR','Tar Package'),
+        ('RPM','Rpm Package'),
+        ('DEB','Deb Package'),
+        ('ISO','ISO Package'),
+        ('IMG','IMG Package'),
+    )
+    name = models.CharField(max_length = 40)
+    genre = models.CharField(u'type', max_length = 20,
+				choices = IMAGE_TYPE_CHOICE, 
+				default = 'ISO')
+    selected = models.BooleanField(u'To Install?', default = False, editable = False)
+    timestamp = models.DateTimeField(u'upload time', auto_now = True, blank = True)
+    upload = models.FileField(upload_to = 'uploads/')
+
+    def __unicode__(self):
+        return self.name
+
+class File(models.Model):
+    name = models.CharField(max_length = 40)
+    selected = models.BooleanField(u'To Transfer?', default = False, editable = False)
+    timestamp = models.DateTimeField(u'upload time', auto_now = True, blank = True)
+    upload = models.FileField(upload_to = 'uploads/')
+
+    def __unicode__(self):
+        return self.name

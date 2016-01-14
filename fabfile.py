@@ -1,4 +1,3 @@
-import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
@@ -81,7 +80,47 @@ def install_software(src=None, dist=None, soft_type='TAR', full_name=None):
             
             elif soft_type == 'DEB':
                 sudo('dpkg -i {0}'.format(pkg))
-	
+
+@task
+@parallel(pool_size = 5)
+def install_OSimage(src=None, dist=None, soft_type='ISO', full_name=None):
+    # hardcode for dist
+    dist = "/tmp"
+    sudo('if [ ! -d {0} ];then mkdir -p {0};fi'.format(dist))
+    with settings(hide('everything')):
+        res = upload_file(src, dist)
+        if res.succeeded:
+            if soft_type == 'ISO':
+                full_name = '{0}/{1}'.format(dist, full_name.split('/')[1])
+                # 1. Mount iso image
+                mount_path = '/mnt/cdrom'
+                sudo('if [ ! -d {0} ];then mkdir -p {0};fi'.format(mount_path))
+                sudo('mount -o loop -t iso9660 {0} {1}'.format(full_name,mount_path))
+                # 2. Get the kernal boot file and copy it to the 'dist' dir 
+                vmlinuz_path = run('find {0} -name vmlinuz*'.format(mount_path))
+                initrd_path = run('find {0} -name initrd*'.format(mount_path))
+                sudo('cp {0} {1}'.format(vmlinuz_path,dist))
+                sudo('cp {0} {1}'.format(initrd_path,dist))
+                # 3. Modify the grub configuration
+                vmlinuz_path = '{0}/{1}'.format(dist,vmlinuz_path.split('/')[-1])
+                initrd_path = '{0}/{1}'.format(dist,initrd_path.split('/')[-1])
+                local('touch tmsApp/static/admin/conf/grub.cfg')
+                with open('tmsApp/static/admin/conf/template_grub.cfg','r') as f:
+                    lines = f.readlines()
+                with open('tmsApp/static/admin/conf/grub.cfg','w') as f:
+                    for line in lines:
+                        f.write(line.replace('$vmlinuz_path',vmlinuz_path)
+				.replace('$initrd_path',initrd_path)
+				.replace('$isoImage_path',full_name))
+                # 4. upload the grub configuration to the host and reboot
+                upload_file('tmsApp/static/admin/conf/grub.cfg','/boot/grub')
+                local('rm -rf tmsApp/static/admin/conf/grub.cfg')
+                sudo('umount {0}'.format(mount_path))
+                sudo('reboot')
+            elif soft_type == 'IMG':
+                #TBD in the future
+                pass
+
 @task
 @parallel(pool_size = 5)
 def get_term_info():
@@ -151,4 +190,3 @@ def reboot_term():
         result['ret'] = reboot(wait = 30)
 
         return result
-
