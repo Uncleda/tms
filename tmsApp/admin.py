@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Terminal, TerminalSoftware, TerminalDevice
+from .models import Terminal, TerminalSoftware, TerminalDevice, Software, OsImage, File
 from .utils import *
 
 # Register your models here.
@@ -41,7 +41,8 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo, refresh_term, monitor_term, poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
+    actions = [getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
+               poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, transferFiles]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
     list_display = ('id', 'computer', 'software_name','software_version','software_size')
@@ -59,7 +60,21 @@ class SoftwareAdmin(admin.ModelAdmin):
     search_fields = ['name','genre']
     actions = [selectResources, unselectResources]
 
+class OsImageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'genre', 'selected', 'timestamp',)
+    list_display_links = ('name',)
+    search_fields = ['name', 'genre',]
+    actions = [selectResources, unselectResources]
+
+class FileAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'selected', 'timestamp',)
+    list_display_links = ('name',)
+    search_fields = ['name',]
+    actions = [selectResources, unselectResources]
+
 admin.site.register(Terminal, TerminalAdmin)
 admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
 admin.site.register(TerminalDevice, TerminalDeviceAdmin)
 admin.site.register(Software, SoftwareAdmin)
+admin.site.register(OsImage,OsImageAdmin)
+admin.site.register(File,FileAdmin)

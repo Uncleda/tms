@@ -2,18 +2,32 @@
 {% load i18n l10n admin_urls admin_static admin_list %}
 
 {% block content %}
-    <p>{% blocktrans %}Monitor Information:{% endblocktrans %}</p>
-
     <form action="" method="post">{% csrf_token %}
-    <div>
-    {% for ip, result in monitor_info %}
-        <h2><li>{{ ip }} - 
-        {% for key, value in result.items %}
-             {{ key }}:{{ value }}
+    <div><table border="1" frame="box">
+        {% block table_header %}
+        <tr>
+            <th>IP</th>
+            <th>Tag</th>
+            <th>Process</th>
+            <th>CPU usage</th>
+            <th>Memory used</th>
+            <th>Memory total</th>
+            <th>Memory percentage</th>
+            <th>Disk used</th>
+            <th>Disk total</th>
+            <th>Disk percentage</th>
+        </tr>
+        {% endblock %}
+        {% for ip, result in monitor_info %}
+            <tr class="row1"><td>{{ ip }}</td>
+            {% for key, value in result %}
+                 <td>{{ value }}</td>
+            {% endfor %}
+            </tr>
         {% endfor %}
-        </li></h2>
-    {% endfor %}
-    <input type="submit" class="btn btn-high btn-info" value="{% trans "Return" %}" />
+        </table>
+        <br />
+        <input type="submit" class="btn btn-high btn-info" value="{% trans "Return" %}" />
     </div>
     </form>
 {% endblock %}
