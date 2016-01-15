@@ -170,6 +170,10 @@ def get_monitor_info():
         result['9_disk_percent'] = disk_percent
 
         return result
+@task
+@parallel(pool_size = 5)
+def get_software_info():
+    pass
 
 @task
 @parallel(pool_size = 5)
