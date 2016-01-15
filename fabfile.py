@@ -1,3 +1,4 @@
+import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
