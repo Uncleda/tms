@@ -172,6 +172,7 @@ def poweron_selected_terms(modeladmin, request, queryset):
     '''
     try:
         for instance in queryset:
+            print 'wakeonlan ' + instance.mac
             os.system('wakeonlan ' + instance.mac)
         showUpdatedResult(modeladmin, request, len(queryset))
 
