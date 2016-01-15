@@ -173,7 +173,11 @@ def get_monitor_info():
 @task
 @parallel(pool_size = 5)
 def get_software_info():
-    pass
+    result = {}
+    result['device_type'] = 'O'
+    result['device_name'] = 'Monitor HP V242'
+    
+    return result
 
 @task
 @parallel(pool_size = 5)

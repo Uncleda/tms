@@ -140,7 +140,7 @@ class FileAdmin(admin.ModelAdmin):
 
 admin.site.register(Terminal, TerminalAdmin)
 #admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
-#admin.site.register(TerminalDevice, TerminalDeviceAdmin)
+admin.site.register(TerminalDevice, TerminalDeviceAdmin)
 admin.site.register(Software, SoftwareAdmin)
 admin.site.register(OsImage,OsImageAdmin)
 admin.site.register(File,FileAdmin)
