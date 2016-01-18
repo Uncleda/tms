@@ -3,6 +3,10 @@ from django.contrib import admin
 from .models import Terminal, TerminalSoftware, TerminalDevice, Software, OsImage, File
 from .utils import *
 
+from django import forms
+from django.contrib.admin.helpers import ActionForm
+from django.utils.translation import ugettext_lazy as _
+
 # Register your models here.
 class TerminalSoftwareInline(admin.TabularInline):
     model = TerminalSoftware
@@ -41,7 +45,7 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
+    actions = [getTerminalSoftwares,getTerminalDevices,getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
                poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, transferFiles]
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):

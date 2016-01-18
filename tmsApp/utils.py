@@ -52,6 +52,34 @@ def getCPUInfo(modeladmin, request, queryset):
 
 getCPUInfo.short_description = "Get CPU Infomation"
 
+def getTerminalSoftwares(modeladmin, request, queryset):
+    '''
+    get the installed softwares list of terminals 
+    and save to DB
+    '''
+    try:
+        output = execute(get_terminal_softwares, hosts = getHostList(queryset))
+        saveResult2Db(output,result_category = 'S')
+        showUpdatedResult(modeladmin, request, len(output))
+    except:
+        showUpdatedResult(modeladmin, request)
+
+getTerminalSoftwares.short_description = "Get Terminal Softwares"
+
+def getTerminalDevices(modeladmin, request, queryset):
+    '''
+    get the peripherals list of terminals
+    and save to DB
+    '''
+    try:
+        output = execute(get_terminal_devices, hosts = getHostList(queryset))
+        saveResult2Db(output,result_category = 'D')
+        showUpdatedResult(modeladmin, request, len(output))
+    except:
+        showUpdatedResult(modeladmin, request)
+
+getTerminalDevices.short_description = "Get Terminal Devices"
+
 def selectResources(modeladmin, request, queryset):
     '''
     select resources to do next action
@@ -293,3 +321,4 @@ def monitor_disk(modeladmin, request, queryset):
     return monitor_term(modeladmin, request, queryset, item = 'disk')
 
 monitor_disk.short_description = "Display disk usage"
+
