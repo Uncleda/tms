@@ -21,9 +21,6 @@ class TerminalDeviceInline(admin.TabularInline):
     max_num = 5
 
 class TerminalAdmin(admin.ModelAdmin):
-    def __init__(self, *args, **kwargs):
-        super(TerminalAdmin, self).__init__(*args, **kwargs)
-        self.action_form_list = None
 
     list_display = ('tag', 'user', 'ip', 'department','project','timestamp','status')
     #fields = (('tag', 'user'), 'ip', 'department','project','mac','cpu_speed')
@@ -83,7 +80,8 @@ class TerminalAdmin(admin.ModelAdmin):
         Return a list of choices for use in a form object.  Each choice is a
         tuple (name, description).
         """
-        choices = [] + BLANK_CHOICE_DASH
+        #choices = [] + BLANK_CHOICE_DASH
+        choices = []
         for func, name, description in six.itervalues(self.get_actions_in_list(request, act_type)):
             choice = (name, description % model_format_dict(self.opts))
             choices.append(choice)
