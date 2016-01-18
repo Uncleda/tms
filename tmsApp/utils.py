@@ -234,6 +234,7 @@ def monitor_term(modeladmin, request, queryset, item = 'all'):
 
     except:
         showUpdatedResult(modeladmin, request)
+        return
 
     for ip, result in monitor_info.items():
         monitor_info[ip] = sorted(result.iteritems(), key=lambda asd:asd[0])
