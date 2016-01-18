@@ -8,12 +8,12 @@ from fabfile import *
 # Create your models here.
 
 class Terminal(models.Model):
-    id = models.AutoField('ID', primary_key = True)
+    id = models.AutoField('ID', primary_key=True)
     status = models.BooleanField(default = False, editable = False)
-    tag = models.CharField(max_length = 30)
+    tag = models.CharField(max_length = 30, unique = True)
     user = models.CharField(max_length = 30, blank = True)
-    ip = models.GenericIPAddressField(u'IP')
-    timestamp = models.DateTimeField(u'updatetime',auto_now=True, blank = True)
+    ip = models.GenericIPAddressField(u'IP', unique = True)
+    timestamp = models.DateTimeField(u'updatetime', auto_now=True, blank = True)
     mac = models.CharField(max_length = 48, blank = True)
     department = models.CharField(max_length = 20, blank = True)
     project = models.CharField(max_length = 20, blank = True)

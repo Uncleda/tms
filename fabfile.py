@@ -1,3 +1,4 @@
+import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
@@ -216,6 +217,14 @@ def get_monitor_info():
         result['9_disk_percent'] = disk_percent
 
         return result
+@task
+@parallel(pool_size = 5)
+def get_software_info():
+    result = {}
+    result['device_type'] = 'O'
+    result['device_name'] = 'Monitor HP V242'
+    
+    return result
 
 @task
 @parallel(pool_size = 5)
