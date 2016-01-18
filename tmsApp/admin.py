@@ -47,8 +47,8 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getUserName, getCPUInfo, refresh_term, poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms,
-               installSoftware, installOSimage, transferFiles, monitor_term, monitor_cpu, monitor_mem, monitor_disk]
+    actions = [getTerminalSoftwares, getTerminalDevices,getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
+               poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, transferFiles]
 
     general_actions = [getUserName, getCPUInfo, refresh_term]
     control_actions = [poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
@@ -105,7 +105,6 @@ class TerminalAdmin(admin.ModelAdmin):
         self.message_action_form.fields['action'].choices = self.get_action_choices_in_list(request, "message_actions")
 
         return super(TerminalAdmin, self).changelist_view(request, extra_context)
-
 
 
 class TerminalSoftwareAdmin(admin.ModelAdmin):
