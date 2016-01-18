@@ -34,6 +34,7 @@ MEDIA_ROOT = '/tmp/'
 
 INSTALLED_APPS = [
     #'suit',
+    'tmsTheme',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
