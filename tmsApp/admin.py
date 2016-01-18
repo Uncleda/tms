@@ -3,10 +3,6 @@ from django.contrib import admin
 from .models import Terminal, TerminalSoftware, TerminalDevice, Software, OsImage, File
 from .utils import *
 
-from django import forms
-from django.contrib.admin.helpers import ActionForm
-from django.utils.translation import ugettext_lazy as _
-
 # Register your models here.
 class TerminalSoftwareInline(admin.TabularInline):
     model = TerminalSoftware

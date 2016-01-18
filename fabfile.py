@@ -45,31 +45,31 @@ def get_cpu_info():
 def get_terminal_devices():
     with settings(hide('everything'), warn_only = True):
         result = []
-	# The input USB device
-	input_usb_num = int(run('cat /proc/bus/input/devices | grep Bus=0003 | wc -l'))
-	if input_usb_num != 0:
+	    # The input USB device
+        input_usb_num = int(run('cat /proc/bus/input/devices | grep Bus=0003 | wc -l'))
+        if input_usb_num:
             for iter in range(input_usb_num):
                 per_result = {}
                 per_result['device_type'] = 'I'
-		per_result['device_name'] = run("""sed -n '/Bus=0003/N;s/.*\\n\(.*\)/\\1/p' /proc/bus/input/devices                                                                                                                           | sed 's/\(.*\)"\(.*\)"\(.*\)/\\2/g' | sed -n '{0}p'""".format(iter + 1))
+                per_result['device_name'] = run("""sed -n '/Bus=0003/N;s/.*\\n\(.*\)/\\1/p' /proc/bus/input/devices | sed 's/\(.*\)"\(.*\)"\(.*\)/\\2/g' | sed -n '{0}p'""".format(iter + 1))
                 result.append(per_result)
         # The USB device
         usb_num = int(run("lsusb | sed '/root hub/d' | sed '/Mouse/d' | sed '/Keyboard/d' | wc -l"))
-	if usb_num != 0:
-	    for iter in range(usb_num):
+        if usb_num:
+            for iter in range(usb_num):
                 per_result = {}
                 per_result['device_type'] = 'U'
-                per_result['device_name'] = run("lsusb | sed '/root hub/d' | sed '/Mouse/d' | sed '/Keyboard/d'                                                                                                                              | cut -d' ' -f7- | sed -n '{0}p'".format(iter + 1))
+                per_result['device_name'] = run("lsusb | sed '/root hub/d' | sed '/Mouse/d' | sed '/Keyboard/d' | cut -d' ' -f7- | sed -n '{0}p'".format(iter + 1))
                 result.append(per_result)
-	# The monitor model type
-	with cd('/sys/class/drm'):
-	    monitor_card_path = run('''find card*/enabled -type f | xargs grep "enabled" | cut -d'/' -f1''')
-	    if monitor_card_path[:4] == 'card':
+        # The monitor model type
+	    with cd('/sys/class/drm'):
+	        monitor_card_path = run('''find card*/enabled -type f | xargs grep "enabled" | cut -d'/' -f1''')
+            if monitor_card_path[:4] == 'card':
                 monitor_result = {}
                 monitor_result['device_type'] = 'O'
-                monitor_result['device_name'] = run("cat {0}/edid | edid-decode | grep 'Monitor name' | cut -d':' -f2                                                                                                                            | cut -b 2-".format(monitor_card_path))
+                monitor_result['device_name'] = run("cat {0}/edid | edid-decode | grep 'Monitor name' | cut -d':' -f2 | cut -b 2-".format(monitor_card_path))
                 result.append(monitor_result)
-	return result
+    return result
 	
 @task
 @parallel(pool_size = 5)
@@ -78,10 +78,10 @@ def get_terminal_softwares():
         result = []
         with cd('/usr/share/nfs/help/html/software'):
             result_num = int(run('''find *.html -type f | xargs sed -n '/<span class ="tw"><a href=/p' | wc -l'''))
-	    if result_num != 0:
+	    if result_num:
                 for iter in range(result_num):
                     per_result = {}
-                    per_result['software_name'] = run("""find *.html -type f | xargs sed -n '/<span class ="tw"><a href=/p'                                                                                                                           | sed 's/^[<p>]*//g' | cut -d'>' -f3 | cut -d' ' -f2 | sed 's/[</a]*$//g'                                                                                                                    | sed -n '{0}p'""".format(iter + 1))
+                    per_result['software_name'] = run("""find *.html -type f | xargs sed -n '/<span class ="tw"><a href=/p' | sed 's/^[<p>]*//g' | cut -d'>' -f3 | cut -d' ' -f2 | sed 's/[</a]*$//g' | sed -n '{0}p'""".format(iter + 1))
                     per_result['software_version'] = ''
                     per_result['soltware_size'] = ''
                     result.append(per_result)
