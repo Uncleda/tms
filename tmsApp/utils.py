@@ -294,3 +294,6 @@ def monitor_disk(modeladmin, request, queryset):
     return monitor_term(modeladmin, request, queryset, item = 'disk')
 
 monitor_disk.short_description = "Display disk usage"
+
+def getSoftwareInfo(modeladmin, request, queryset):
+    pass
