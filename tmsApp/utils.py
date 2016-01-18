@@ -241,16 +241,16 @@ def monitor_term(modeladmin, request, queryset, item = 'all'):
 
     if item == 'all':
         template = "monitor_info.html"
-    if item == 'cpu':
+    elif item == 'cpu':
         template = "monitor_cpu.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][3:9]
-    if item == 'mem':
+    elif item == 'mem':
         template = "monitor_mem.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][1:3]
             del monitor_info[ip][4:]
-    if item == 'disk':
+    elif item == 'disk':
         template = "monitor_disk.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][1:6]
