@@ -1,5 +1,5 @@
 from .models import *
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.core.exceptions import ObjectDoesNotExist
 
 def getHostList(queryset):
@@ -13,7 +13,7 @@ def getHostList(queryset):
 
 def showUpdatedResult(self, request, rows_updated=0):
     '''
-    show action result on top
+    show action result to user
     '''
     if rows_updated == 0:
         self.message_user(request,
