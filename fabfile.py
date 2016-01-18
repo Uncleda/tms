@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
 from fabric.context_managers import *
-import string
 
 django.project('tms')
 
@@ -45,7 +43,7 @@ def get_cpu_info():
 def get_terminal_devices():
     with settings(hide('everything'), warn_only = True):
         result = []
-	    # The input USB device
+        # The input USB device
         input_usb_num = int(run('cat /proc/bus/input/devices | grep Bus=0003 | wc -l'))
         if input_usb_num:
             for iter in range(input_usb_num):
