@@ -54,6 +54,36 @@ def getCPUInfo(modeladmin, request, queryset):
 
 getCPUInfo.short_description = "Get CPU Infomation"
 
+def getTerminalSoftwares(modeladmin, request, queryset):
+    '''
+    get the installed softwares list of terminals 
+    and save to DB
+    '''
+    try:
+        output = execute(get_terminal_softwares, hosts = getHostList(queryset))
+        print output
+        saveResult2Db(output, result_category = 'S')
+        print "save result"
+        showUpdatedResult(modeladmin, request, len(output))
+    except:
+        showUpdatedResult(modeladmin, request)
+
+getTerminalSoftwares.short_description = "Get Terminal Softwares"
+
+def getTerminalDevices(modeladmin, request, queryset):
+    '''
+    get the peripherals list of terminals
+    and save to DB
+    '''
+    try:
+        output = execute(get_terminal_devices, hosts = getHostList(queryset))
+        saveResult2Db(output,result_category = 'D')
+        showUpdatedResult(modeladmin, request, len(output))
+    except:
+        showUpdatedResult(modeladmin, request)
+
+getTerminalDevices.short_description = "Get Terminal Devices"
+
 def selectResources(modeladmin, request, queryset):
     '''
     select resources to do next action
@@ -174,6 +204,7 @@ def poweron_selected_terms(modeladmin, request, queryset):
     '''
     try:
         for instance in queryset:
+            print 'wakeonlan ' + instance.mac
             os.system('wakeonlan ' + instance.mac)
         showUpdatedResult(modeladmin, request, len(queryset))
 
@@ -235,6 +266,7 @@ def monitor_term(modeladmin, request, queryset, item = 'all'):
 
     except:
         showUpdatedResult(modeladmin, request)
+        return
 
     for ip, result in monitor_info.items():
         monitor_info[ip] = sorted(result.iteritems(), key=lambda asd:asd[0])
@@ -242,16 +274,16 @@ def monitor_term(modeladmin, request, queryset, item = 'all'):
 
     if item == 'all':
         template = "monitor_info.html"
-    if item == 'cpu':
+    elif item == 'cpu':
         template = "monitor_cpu.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][3:9]
-    if item == 'mem':
+    elif item == 'mem':
         template = "monitor_mem.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][1:3]
             del monitor_info[ip][4:]
-    if item == 'disk':
+    elif item == 'disk':
         template = "monitor_disk.html"
         for ip, result in monitor_info.items():
             del monitor_info[ip][1:6]

@@ -34,6 +34,7 @@ MEDIA_ROOT = '/tmp/'
 
 INSTALLED_APPS = [
     #'suit',
+    'tmsTheme',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +60,7 @@ ROOT_URLCONF = 'tms.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ os.path.join(BASE_DIR, "templates") ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

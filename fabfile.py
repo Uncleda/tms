@@ -1,5 +1,7 @@
 #!/usr/bin/python
 #-*-coding:UTF-8-*-
+
+import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
@@ -46,6 +48,74 @@ def get_cpu_info():
 	print type(result['cpu_vendor']), result['cpu_vendor']
 
 	return result
+
+@task
+@parallel(pool_size = 5)
+def get_terminal_devices():
+    with settings(hide('everything'), warn_only = True):
+        result = []
+        # The input USB device
+        device_input = run("""cat /proc/bus/input/devices | grep USB | cut -d'=' -f2 |awk -F '"' '{print $2}'""")
+        
+        if device_input.find('\r\n'):
+            device_input_list = device_input.split('\r\n')
+
+            for i in device_input_list:
+                per_result = {}
+                per_result['device_type'] = 'I'
+                per_result['device_name'] = i
+                result.append(per_result)
+        else:
+            per_result = {}
+            per_result['device_type'] = 'I'
+            per_result['device_name'] = device_input
+            result.append(per_result)
+        
+        # The other USB device, like printer, Wireless Adapter and so on
+        other_device = run("lsusb | grep -v 'Mouse' | grep -v 'Keyboard' | grep -v 'hub'")
+        
+        if other_device.find('\r\n'):
+            other_device_list = other_device.split('\r\n')
+            for i in other_device_list:
+                per_result = {}
+                per_result['device_type'] = 'U'
+                per_result['device_name'] = i.split(' ', 6)[-1]
+                result.append(per_result)
+        else:
+            per_result = {}
+            per_result['device_type'] = 'I'
+            per_result['device_name'] = other_device.split(' ', 6)[-1]
+            result.append(per_result)
+        
+        # The monitor model type
+	    #with cd('/sys/class/drm/'):
+        monitor_card_path = run("find /sys/class/drm/card*/enabled -type f | xargs grep 'enabled' | cut -d'/' -f5")
+        print monitor_card_path
+        if monitor_card_path[:4] == 'card':
+            monitor_result = {}
+            monitor_result['device_type'] = 'O'
+            monitor_name = run("cat /sys/class/drm/{0}/edid | edid-decode | grep 'Monitor name'".format(monitor_card_path))
+            print monitor_name
+            monitor_result['device_name'] = str(monitor_name.split(' ', 2)[-1])
+            result.append(monitor_result)
+    return result
+	
+@task
+@parallel(pool_size = 5)
+def get_terminal_softwares():
+    with settings(hide('everything'), warn_only = True):
+        result = []
+        with cd('/usr/share/applications'):
+            softwares = run('ls')
+            software_list = softwares.split(' ')
+            for s in software_list:
+                if s != '':
+                    per_result = {}
+                    per_result['software_name'] = str(s.split('.desktop')[0])
+                    per_result['software_version'] = 'version1.0'
+                    per_result['software_size'] = 100.0
+                    result.append(per_result)
+        return result
 
 @task
 @parallel(pool_size = 5)
