@@ -1,8 +1,16 @@
+#!/usr/bin/python
+#-*-coding:UTF-8-*-
+
 import string
 from fabric.contrib import django
 from fabric.api import *
 from fabric.colors import *
 from fabric.context_managers import *
+
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 
 django.project('tms')
 
@@ -14,6 +22,8 @@ env.warn_only = True
 env.skip_bad_hosts = True
 env.timeout = 3
 env.preconnect = True
+
+talk_content='大家好'
 
 @task
 @parallel(pool_size = 5)
@@ -259,3 +269,17 @@ def reboot_term():
         result['ret'] = reboot(wait = 30)
 
         return result
+
+@task
+@parallel(pool_size = 500)
+def launch_communication():
+    with settings(hide('everything'),warn_only = True):
+         global talk_content
+         shellstr='export DISPLAY=:0.0;zenity --entry --title "管理员消息" --text {0} --width=350 --height=150'
+         shellstr=shellstr.format('"{0}"'.format('管理员:{0}'.format(talk_content)))
+         ret_content=run(shellstr)
+         return ret_content
+
+def get_talk_content(content):
+    global talk_content
+    talk_content = content

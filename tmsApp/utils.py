@@ -9,6 +9,8 @@ from .commons import *
 from fabfile import *
 from .models import *
 import os
+import thread
+from LaunchCommunication import *
 
 def save_changes(new_changes):
     '''
@@ -326,3 +328,16 @@ def monitor_disk(modeladmin, request, queryset):
 
 monitor_disk.short_description = "Display disk usage"
 
+def launchCommunication(modeladmin,request,queryset):
+    '''
+    Launch a communication to one or multiply client user
+    '''
+    try:
+        hosts = getHostList(queryset)
+        if len(hosts):
+            chatroomui=ChatRoomUI(hosts)
+            chatroomui.root.mainloop()
+    except:
+        chatroomui.close()
+
+launchCommunication.short_description = "Launch Communication"

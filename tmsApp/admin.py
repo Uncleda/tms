@@ -47,8 +47,9 @@ class TerminalAdmin(admin.ModelAdmin):
     inlines = [TerminalDeviceInline,TerminalSoftwareInline,]
     #list_editable
 
-    actions = [getTerminalSoftwares, getTerminalDevices,getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
-               poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, transferFiles]
+    actions = [getTerminalSoftwares, getTerminalDevices, getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
+               poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, 
+               transferFiles,launchCommunication]
 
     general_actions = [getUserName, getCPUInfo, getTerminalSoftwares, getTerminalDevices, refresh_term]
     control_actions = [poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
