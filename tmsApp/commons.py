@@ -48,14 +48,14 @@ def saveResult2Db(output, result_category='T'):
                 new_device = TerminalDevice()
                 for k1, v1 in d.items():
                     setattr(new_device, '{0}'.format(k1), v1)
-                term.terminaldevice_set.create(new_device)
+                term.terminaldevice_set.add(new_device, bulk=False)
                     
         elif result_category == 'S':
             for s in v:
                 new_software = TerminalSoftware()
                 for k1, v1 in s.items():
                     setattr(new_software, '{0}'.format(k1), v1)
-                term.terminalsoftware_set.create(new_software)
+                term.terminalsoftware_set.add(new_software, bulk=False)
 
         elif result_category == 'T':
             updateFields = []

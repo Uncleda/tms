@@ -45,29 +45,49 @@ def get_terminal_devices():
     with settings(hide('everything'), warn_only = True):
         result = []
         # The input USB device
-        input_usb_num = int(run('cat /proc/bus/input/devices | grep Bus=0003 | wc -l'))
-        if input_usb_num:
-            for iter in range(input_usb_num):
+        device_input = run("""cat /proc/bus/input/devices | grep USB | cut -d'=' -f2 |awk -F '"' '{print $2}'""")
+        
+        if device_input.find('\r\n'):
+            device_input_list = device_input.split('\r\n')
+
+            for i in device_input_list:
                 per_result = {}
                 per_result['device_type'] = 'I'
-                per_result['device_name'] = run("""sed -n '/Bus=0003/N;s/.*\\n\(.*\)/\\1/p' /proc/bus/input/devices | sed 's/\(.*\)"\(.*\)"\(.*\)/\\2/g' | sed -n '{0}p'""".format(iter + 1))
+                per_result['device_name'] = i
                 result.append(per_result)
-        # The USB device
-        usb_num = int(run("lsusb | sed '/root hub/d' | sed '/Mouse/d' | sed '/Keyboard/d' | wc -l"))
-        if usb_num:
-            for iter in range(usb_num):
+        else:
+            per_result = {}
+            per_result['device_type'] = 'I'
+            per_result['device_name'] = device_input
+            result.append(per_result)
+        
+        # The other USB device, like printer, Wireless Adapter and so on
+        other_device = run("lsusb | grep -v 'Mouse' | grep -v 'Keyboard' | grep -v 'hub'")
+        
+        if other_device.find('\r\n'):
+            other_device_list = other_device.split('\r\n')
+            for i in other_device_list:
                 per_result = {}
                 per_result['device_type'] = 'U'
-                per_result['device_name'] = run("lsusb | sed '/root hub/d' | sed '/Mouse/d' | sed '/Keyboard/d' | cut -d' ' -f7- | sed -n '{0}p'".format(iter + 1))
+                per_result['device_name'] = i.split(' ', 6)[-1]
                 result.append(per_result)
+        else:
+            per_result = {}
+            per_result['device_type'] = 'I'
+            per_result['device_name'] = other_device.split(' ', 6)[-1]
+            result.append(per_result)
+        
         # The monitor model type
-	    with cd('/sys/class/drm'):
-	        monitor_card_path = run('''find card*/enabled -type f | xargs grep "enabled" | cut -d'/' -f1''')
-            if monitor_card_path[:4] == 'card':
-                monitor_result = {}
-                monitor_result['device_type'] = 'O'
-                monitor_result['device_name'] = run("cat {0}/edid | edid-decode | grep 'Monitor name' | cut -d':' -f2 | cut -b 2-".format(monitor_card_path))
-                result.append(monitor_result)
+	    #with cd('/sys/class/drm/'):
+        monitor_card_path = run("find /sys/class/drm/card*/enabled -type f | xargs grep 'enabled' | cut -d'/' -f5")
+        print monitor_card_path
+        if monitor_card_path[:4] == 'card':
+            monitor_result = {}
+            monitor_result['device_type'] = 'O'
+            monitor_name = run("cat /sys/class/drm/{0}/edid | edid-decode | grep 'Monitor name'".format(monitor_card_path))
+            print monitor_name
+            monitor_result['device_name'] = str(monitor_name.split(' ', 2)[-1])
+            result.append(monitor_result)
     return result
 	
 @task
@@ -75,16 +95,17 @@ def get_terminal_devices():
 def get_terminal_softwares():
     with settings(hide('everything'), warn_only = True):
         result = []
-        with cd('/usr/share/nfs/help/html/software'):
-            result_num = int(run('''find *.html -type f | xargs sed -n '/<span class ="tw"><a href=/p' | wc -l'''))
-	    if result_num:
-                for iter in range(result_num):
+        with cd('/usr/share/applications'):
+            softwares = run('ls')
+            software_list = softwares.split(' ')
+            for s in software_list:
+                if s != '':
                     per_result = {}
-                    per_result['software_name'] = run("""find *.html -type f | xargs sed -n '/<span class ="tw"><a href=/p' | sed 's/^[<p>]*//g' | cut -d'>' -f3 | cut -d' ' -f2 | sed 's/[</a]*$//g' | sed -n '{0}p'""".format(iter + 1))
-                    per_result['software_version'] = ''
-                    per_result['soltware_size'] = ''
+                    per_result['software_name'] = str(s.split('.desktop')[0])
+                    per_result['software_version'] = 'version1.0'
+                    per_result['software_size'] = 100.0
                     result.append(per_result)
-    return result
+        return result
 
 @task
 @parallel(pool_size = 5)
@@ -217,14 +238,6 @@ def get_monitor_info():
         result['9_disk_percent'] = disk_percent
 
         return result
-@task
-@parallel(pool_size = 5)
-def get_software_info():
-    result = {}
-    result['device_type'] = 'O'
-    result['device_name'] = 'Monitor HP V242'
-    
-    return result
 
 @task
 @parallel(pool_size = 5)

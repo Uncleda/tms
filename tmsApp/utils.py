@@ -59,7 +59,9 @@ def getTerminalSoftwares(modeladmin, request, queryset):
     '''
     try:
         output = execute(get_terminal_softwares, hosts = getHostList(queryset))
-        saveResult2Db(output,result_category = 'S')
+        print output
+        saveResult2Db(output, result_category = 'S')
+        print "save result"
         showUpdatedResult(modeladmin, request, len(output))
     except:
         showUpdatedResult(modeladmin, request)

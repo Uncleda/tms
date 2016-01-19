@@ -32,7 +32,7 @@ class Terminal(models.Model):
 
 class TerminalSoftware(models.Model):
     computer = models.ForeignKey(Terminal)
-    software_name = models.CharField(u'Name', max_length = 40, blank = True)
+    software_name = models.CharField(u'Name', max_length = 100, blank = True)
     software_version = models.CharField(u'Version', max_length = 20, blank = True)
     software_size = models.FloatField(u'Size', default = 0)
 
@@ -50,7 +50,7 @@ class TerminalDevice(models.Model):
     device_type = models.CharField(max_length = 20,
                                     choices = DEVICE_TYPE_CHOISES,
                                     null = True, blank = True)
-    device_name = models.CharField(max_length = 40, blank = True)
+    device_name = models.CharField(max_length = 100, blank = True)
 
     def __unicode__(self):
         return self.device_name

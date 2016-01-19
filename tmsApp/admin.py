@@ -50,7 +50,7 @@ class TerminalAdmin(admin.ModelAdmin):
     actions = [getTerminalSoftwares, getTerminalDevices,getUserName, getCPUInfo, refresh_term, monitor_term, monitor_cpu, monitor_mem, monitor_disk,
                poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms, installSoftware, installOSimage, transferFiles]
 
-    general_actions = [getUserName, getCPUInfo, refresh_term]
+    general_actions = [getUserName, getCPUInfo, getTerminalSoftwares, getTerminalDevices, refresh_term]
     control_actions = [poweron_selected_terms, shutdown_selected_terms, reboot_selected_terms]
     install_actions = [installSoftware, installOSimage, transferFiles]
     monitor_actions = [monitor_term, monitor_cpu, monitor_mem, monitor_disk]
@@ -136,7 +136,7 @@ class FileAdmin(admin.ModelAdmin):
     actions = [selectResources, unselectResources]
 
 admin.site.register(Terminal, TerminalAdmin)
-#admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
+admin.site.register(TerminalSoftware, TerminalSoftwareAdmin)
 admin.site.register(TerminalDevice, TerminalDeviceAdmin)
 admin.site.register(Software, SoftwareAdmin)
 admin.site.register(OsImage,OsImageAdmin)
