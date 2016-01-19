@@ -36,7 +36,7 @@ def saveResult2Db(output, result_category='T'):
     if len(output) < 1:
         pass
         return
-
+#TODO
     for k, v in output.items():
         try:
 	        term = Terminal.objects.get(ip = k)
